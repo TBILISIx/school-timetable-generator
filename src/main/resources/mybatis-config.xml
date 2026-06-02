@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "https://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+    <!-- Load credentials from the onfig.properties -->
+    <properties resource="config.properties"/>
+
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="lazyLoadingEnabled" value="false"/>
+        <setting name="useGeneratedKeys" value="true"/>
+    </settings>
+
+<!--    &lt;!&ndash; Model aliases for mappers &ndash;&gt;-->
+<!--    <typeAliases>-->
+<!--        <typeAlias alias="Patient"                 type="com.solvd.hospital.model.Patient"/>-->
+<!--        <typeAlias alias="Doctor"                  type="com.solvd.hospital.model.Doctor"/>-->
+<!--        <typeAlias alias="Appointment"             type="com.solvd.hospital.model.Appointment"/>-->
+<!--        <typeAlias alias="Admission"               type="com.solvd.hospital.model.Admission"/>-->
+<!--        <typeAlias alias="Payment"                 type="com.solvd.hospital.model.Payment"/>-->
+<!--        <typeAlias alias="Prescription"            type="com.solvd.hospital.model.Prescription"/>-->
+<!--        <typeAlias alias="PrescriptionMedication"  type="com.solvd.hospital.model.PrescriptionMedication"/>-->
+<!--        <typeAlias alias="MedicalRecord"           type="com.solvd.hospital.model.MedicalRecord"/>-->
+<!--        <typeAlias alias="Allergy"                 type="com.solvd.hospital.model.Allergy"/>-->
+<!--        <typeAlias alias="Department"              type="com.solvd.hospital.model.Department"/>-->
+<!--        <typeAlias alias="Room"                    type="com.solvd.hospital.model.Room"/>-->
+<!--        <typeAlias alias="Staff"                   type="com.solvd.hospital.model.Staff"/>-->
+<!--        <typeAlias alias="MedicalClinic"           type="com.solvd.hospital.model.MedicalClinic"/>-->
+<!--    </typeAliases>-->
+
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <!-- Use the same connection pool size from config.properties -->
+            <dataSource type="POOLED">
+                <property name="driver"   value="${db.driver}"/>
+                <property name="url"      value="${db.url}"/>
+                <property name="username" value="${db.username}"/>
+                <property name="password" value="${db.password}"/>
+                <property name="poolMaximumActiveConnections" value="${db.pool_size}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+<!--    <mappers>-->
+<!--        <mapper resource="mappers/PatientMapper.xml"/>-->
+<!--        <mapper resource="mappers/DoctorMapper.xml"/>-->
+<!--        <mapper resource="mappers/AppointmentMapper.xml"/>-->
+<!--        <mapper resource="mappers/AdmissionMapper.xml"/>-->
+<!--        <mapper resource="mappers/PaymentMapper.xml"/>-->
+<!--        <mapper resource="mappers/PrescriptionMapper.xml"/>-->
+<!--        <mapper resource="mappers/MedicalRecordMapper.xml"/>-->
+<!--        <mapper resource="mappers/ReportMapper.xml"/>-->
+<!--    </mappers>-->
+
+</configuration>
