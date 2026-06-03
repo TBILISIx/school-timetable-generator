@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class TimetableEntry {
 
     private Long   id;
-    private Timeslot slot;
+    private TimeSlot slot;
     private Subject   subject;
     private Teacher   teacher;
     private Classroom classroom;
