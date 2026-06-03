@@ -13,7 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Timetable {
-    private long id;
+
+    private Long id;
 
     @Builder.Default
     private List<TimetableEntry> entries = new ArrayList<>();

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Timeslot {
 
-    private long id;
+    private Long id;
     private long dayOfWeek;
     private long periodNumber;
 }
