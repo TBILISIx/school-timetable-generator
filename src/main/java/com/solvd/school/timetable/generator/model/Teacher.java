@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -13,4 +15,5 @@ public class Teacher {
 
     private Long id;
     private String  name;
+    private List<Subject> subjects;
 }
