@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Timeslot {
+public class TimeSlot {
 
     private Long id;
     private long dayOfWeek;
