@@ -9,9 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class TimeSlot {
 
     private Long id;
-    private long dayOfWeek;
-    private long periodNumber;
+    private String dayOfWeek;
+    private Integer periodNumber;
 }
