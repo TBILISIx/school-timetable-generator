@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.solvd.school.timetable.generator.dao.TimetableDao">
+
+    <!-- SubjectResultMap -->
+    <resultMap id="SubjectResultMap" type="Subject">
+        <id property="id" column="subject_id"/>
+        <result property="name" column="subject_name"/>
+        <result property="isPe" column="is_pe"/>
+    </resultMap>
+
+    <!-- TeacherResultMap -->
+    <resultMap id="TeacherResultMap" type="Teacher">
+        <id property="id" column="teacher_id"/>
+        <result property="name" column="teacher_name"/>
+    </resultMap>
+
+    <!-- ClassroomResultMap -->
+    <resultMap id="ClassroomResultMap" type="Classroom">
+        <id property="id" column="classroom_id"/>
+        <result property="name" column="classroom_name"/>
+    </resultMap>
+
+    <!-- TimeSlotResultMap -->
+    <resultMap id="TimeSlotResultMap" type="TimeSlot">
+        <id property="id" column="slot_id"/>
+        <result property="dayOfWeek" column="day_of_week"/>
+        <result property="periodNumber" column="period_number"/>
+    </resultMap>
+
+    <!-- EntryResultMap -->
+    <resultMap id="EntryResultMap" type="TimetableEntry">
+        <id property="id" column="entry_id"/>
+        <association property="slot" resultMap="TimeSlotResultMap"/>
+        <association property="subject" resultMap="SubjectResultMap"/>
+        <association property="teacher" resultMap="TeacherResultMap"/>
+        <association property="classroom" resultMap="ClassroomResultMap"/>
+    </resultMap>
+
+    <!-- TimetableResultMap -->
+    <resultMap id="TimetableResultMap" type="Timetable">
+        <id property="id" column="timetable_id"/>
+        <result property="fitnessScore" column="fitness_score"/>
+        <collection property="entries"
+                    ofType="TimetableEntry"
+                    resultMap="EntryResultMap"/>
+    </resultMap>
+
+    <!-- insert timetable -->
+    <insert id="insert" parameterType="Timetable" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO timetables (subjects_per_day, fitness_score, created_at)
+        VALUES (#{entries.size}, #{fitnessScore}, NOW())
+    </insert>
+
+    <!-- insertEntry -->
+    <insert id="insertEntry" parameterType="TimetableEntry" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO timetable_entries (timetable_id, subject_id, time_slot_id, teacher_id, classroom_id)
+        VALUES (#{timetableId}, #{subject.id}, #{slot.id}, #{teacher.id}, #{classroom.id})
+    </insert>
+
+    <!-- findById -->
+    <select id="findById" parameterType="java.lang.Long" resultMap="TimetableResultMap">
+        SELECT
+        t.id AS timetable_id,
+        t.fitness_score AS fitness_score,
+        e.id AS entry_id,
+        s.id AS subject_id,
+        s.name AS subject_name,
+        s.is_pe AS is_pe,
+        tc.id AS teacher_id,
+        tc.name AS teacher_name,
+        cr.id AS classroom_id,
+        cr.name AS classroom_name,
+        ts.id AS slot_id,
+        ts.day_of_week AS day_of_week,
+        ts.period_number AS period_number
+        FROM timetables t
+        INNER JOIN timetable_entries e
+        ON e.timetable_id = t.id
+        INNER JOIN subjects s
+        ON s.id = e.subject_id
+        INNER JOIN teachers tc
+        ON tc.id = e.teacher_id
+        INNER JOIN classrooms cr
+        ON cr.id = e.classroom_id
+        INNER JOIN time_slots ts
+        ON ts.id = e.time_slot_id
+        WHERE t.id = #{id}
+    </select>
+
+</mapper>

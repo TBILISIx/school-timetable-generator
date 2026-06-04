@@ -4,9 +4,10 @@ import com.solvd.school.timetable.generator.model.Subject;
 
 import java.util.List;
 
-public interface SubjectMapper {
+public interface SubjectDao {
+
     List<Subject> findAll();
-    Subject findById(int id);
-    void insert(Subject subject);
-    void delete(int id);
+
+    Subject findById(Long id);
+
 }

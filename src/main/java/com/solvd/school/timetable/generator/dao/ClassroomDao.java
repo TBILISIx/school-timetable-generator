@@ -4,9 +4,10 @@ import com.solvd.school.timetable.generator.model.Classroom;
 
 import java.util.List;
 
-public interface ClassroomMapper {
+public interface ClassroomDao {
 
     List<Classroom> findAll();
-    void insert(Classroom classroom);
-    void delete(int id);
+
+    Classroom findById(Long id);
+
 }
