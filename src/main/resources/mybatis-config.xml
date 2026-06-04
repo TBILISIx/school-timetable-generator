@@ -12,22 +12,16 @@
         <setting name="useGeneratedKeys" value="true"/>
     </settings>
 
-<!--    &lt;!&ndash; Model aliases for mappers &ndash;&gt;-->
-<!--    <typeAliases>-->
-<!--        <typeAlias alias="Patient"                 type="com.solvd.hospital.model.Patient"/>-->
-<!--        <typeAlias alias="Doctor"                  type="com.solvd.hospital.model.Doctor"/>-->
-<!--        <typeAlias alias="Appointment"             type="com.solvd.hospital.model.Appointment"/>-->
-<!--        <typeAlias alias="Admission"               type="com.solvd.hospital.model.Admission"/>-->
-<!--        <typeAlias alias="Payment"                 type="com.solvd.hospital.model.Payment"/>-->
-<!--        <typeAlias alias="Prescription"            type="com.solvd.hospital.model.Prescription"/>-->
-<!--        <typeAlias alias="PrescriptionMedication"  type="com.solvd.hospital.model.PrescriptionMedication"/>-->
-<!--        <typeAlias alias="MedicalRecord"           type="com.solvd.hospital.model.MedicalRecord"/>-->
-<!--        <typeAlias alias="Allergy"                 type="com.solvd.hospital.model.Allergy"/>-->
-<!--        <typeAlias alias="Department"              type="com.solvd.hospital.model.Department"/>-->
-<!--        <typeAlias alias="Room"                    type="com.solvd.hospital.model.Room"/>-->
-<!--        <typeAlias alias="Staff"                   type="com.solvd.hospital.model.Staff"/>-->
-<!--        <typeAlias alias="MedicalClinic"           type="com.solvd.hospital.model.MedicalClinic"/>-->
-<!--    </typeAliases>-->
+<!-- aliases for mappers -->
+
+    <typeAliases>
+        <typeAlias alias="Classroom" type="com.solvd.school.timetable.generator.model.Classroom"/>
+        <typeAlias alias="Subject" type="com.solvd.school.timetable.generator.model.Subject"/>
+        <typeAlias alias="Teacher" type="com.solvd.school.timetable.generator.model.Teacher"/>
+        <typeAlias alias="TimeSlot" type="com.solvd.school.timetable.generator.model.TimeSlot"/>
+        <typeAlias alias="Timetable" type="com.solvd.school.timetable.generator.model.Timetable"/>
+        <typeAlias alias="TimetableEntry" type="com.solvd.school.timetable.generator.model.TimetableEntry"/>
+    </typeAliases>
 
     <environments default="development">
         <environment id="development">
@@ -43,15 +37,14 @@
         </environment>
     </environments>
 
-<!--    <mappers>-->
-<!--        <mapper resource="mappers/PatientMapper.xml"/>-->
-<!--        <mapper resource="mappers/DoctorMapper.xml"/>-->
-<!--        <mapper resource="mappers/AppointmentMapper.xml"/>-->
-<!--        <mapper resource="mappers/AdmissionMapper.xml"/>-->
-<!--        <mapper resource="mappers/PaymentMapper.xml"/>-->
-<!--        <mapper resource="mappers/PrescriptionMapper.xml"/>-->
-<!--        <mapper resource="mappers/MedicalRecordMapper.xml"/>-->
-<!--        <mapper resource="mappers/ReportMapper.xml"/>-->
-<!--    </mappers>-->
+    <!-- registering Mappers -->
+
+    <mappers>
+        <mapper resource="mappers/SubjectMapper.xml"/>
+        <mapper resource="mappers/TeacherMapper.xml"/>
+        <mapper resource="mappers/ClassroomMapper.xml"/>
+        <mapper resource="mappers/TimeSlotMapper.xml"/>
+        <mapper resource="mappers/TimetableMapper.xml"/>
+    </mappers>
 
 </configuration>

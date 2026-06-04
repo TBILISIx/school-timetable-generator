@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.solvd.school.timetable.generator.dao.SubjectDao">
+
+    <!-- ResultMap -->
+    <resultMap id="SubjectResultMap" type="Subject">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="isPe" column="is_pe"/>
+    </resultMap>
+
+    <!-- findAll -->
+    <select id="findAll" resultMap="SubjectResultMap">
+        SELECT id, name, is_pe FROM subjects
+    </select>
+
+    <!-- findById -->
+    <select id="findById" parameterType="java.lang.Long" resultMap="SubjectResultMap">
+        SELECT id, name, is_pe FROM subjects
+        WHERE id = #{id}
+    </select>
+
+
+
+</mapper>
+
+
+
+
+<!-- What Each Part Does And Why
+namespace — must match your DAO interface full path exactly. This is how MyBatis connects the XML to your Java interface. One typo here and nothing works.
+resultMap — maps DB column names to Java field names. This is critical for is_pe → isPe because the names don't match. MyBatis can't figure that out on its own without mapUnderscoreToCamelCase — and even with that setting you should be explicit with resultMap for clarity.
+id tag vs result tag — <id> is for the primary key specifically. MyBatis uses it for caching and deduplication internally. Always use <id> for primary keys, <result> for everything else.
+#{id} — this is a safe parameterized placeholder, equivalent to a PreparedStatement ?. Never use ${id} — that's string concatenation and opens SQL injection. -->

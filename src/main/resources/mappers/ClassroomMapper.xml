@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.solvd.school.timetable.generator.dao.ClassroomDao">
+
+    <!-- ResultMap -->
+    <resultMap id="ClassroomResultMap" type="Classroom">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+    <!-- findAll -->
+    <select id="findAll" resultMap="ClassroomResultMap">
+        SELECT id, name FROM classroom
+    </select>
+
+    <!-- findById -->
+    <select id="findById" parameterType="java.lang.Long" resultMap="ClassroomResultMap">
+        SELECT id, name FROM classroom
+        WHERE id = #{id}
+    </select>
+
+</mapper>
