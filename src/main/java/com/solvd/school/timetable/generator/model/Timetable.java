@@ -10,10 +10,11 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class Timetable {
 
     private Long id;
     private List<TimetableEntry> entries = new ArrayList<>();
     private Integer fitnessScore = 0;
-
+  
 }
