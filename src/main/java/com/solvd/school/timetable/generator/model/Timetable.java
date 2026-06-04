@@ -21,5 +21,5 @@ public class Timetable {
     private List<TimetableEntry> entries = new ArrayList<>();
 
     @Builder.Default
-    private Integer fitnessScore = 0;
+    private double fitnessScore = -1.0;
 }
