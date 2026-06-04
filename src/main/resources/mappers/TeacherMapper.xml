@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.solvd.school.timetable.generator.dao.TeacherDao">
+
+    <!-- SubjectResultMap  -->
+    <resultMap id="SubjectResultMap" type="Subject">
+        <id     property="id"   column="id"/>
+        <result property="name" column="name"/>
+        <result property="isPe" column="is_pe"/>
+    </resultMap>
+
+
+    <!-- TeacherResultMap -->
+    <resultMap id="TeacherResultMap" type="Teacher">
+        <id     property="id"   column="id"/>
+        <result property="name" column="name"/>
+        <collection property="subjects"
+                    ofType="Subject"
+                    select="selectSubjectsByTeacherId"
+                    column="id"/>
+    </resultMap>
+
+    <!-- selectSubjectsByTeacherId -->
+    <select id="selectSubjectsByTeacherId" parameterType="java.lang.Long" resultMap="SubjectResultMap">
+        SELECT s.id, s.name, s.is_pe FROM subjects s
+        INNER JOIN teacher_subjects ts ON s.id = ts.subject_id
+        WHERE ts.teacher_id = #{id}
+    </select>
+
+    <!--  findAll  -->
+    <select id="findAll" resultMap="TeacherResultMap">
+        SELECT id, name FROM teachers
+    </select>
+
+    <!-- findById -->
+    <select id="findById" parameterType="java.lang.Long" resultMap="TeacherResultMap">
+        SELECT id, name FROM teachers
+        WHERE id = #{id}
+    </select>
+
+</mapper>
