@@ -13,12 +13,12 @@
 
     <!-- findAll -->
     <select id="findAll" resultMap="ClassroomResultMap">
-        SELECT id, name FROM classroom
+        SELECT id, name FROM classrooms
     </select>
 
     <!-- findById -->
     <select id="findById" parameterType="java.lang.Long" resultMap="ClassroomResultMap">
-        SELECT id, name FROM classroom
+        SELECT id, name FROM classrooms
         WHERE id = #{id}
     </select>
 
