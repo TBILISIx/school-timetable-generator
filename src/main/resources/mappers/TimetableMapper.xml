@@ -52,7 +52,7 @@
     <!-- insert timetable -->
     <insert id="insert" parameterType="Timetable" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO timetables (subjects_per_day, fitness_score, created_at)
-        VALUES (#{entries.size}, #{fitnessScore}, NOW())
+        VALUES (#{subjectsPerDay}, #{fitnessScore}, NOW())
     </insert>
 
     <!-- insertEntry -->

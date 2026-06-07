@@ -20,6 +20,8 @@ public class Timetable {
     @Builder.Default
     private List<TimetableEntry> entries = new ArrayList<>();
 
+    private Integer subjectsPerDay;
+
     @Builder.Default
     private Integer fitnessScore = 0;
 }
