@@ -1,4 +1,4 @@
-package com.solvd.school.timetable.generator;
+package com.solvd.school.timetable.generator.util;
 
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
