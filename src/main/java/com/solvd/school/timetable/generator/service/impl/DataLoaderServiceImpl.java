@@ -15,8 +15,8 @@ import java.util.List;
 
 public class DataLoaderServiceImpl implements DataLoaderService {
 
-    private final SubjectDao subjectDao     = new MyBatisSubjectDaoImpl();
-    private final TeacherDao teacherDao     = new MyBatisTeacherDaoImpl();
+    private final SubjectDao subjectDao = new MyBatisSubjectDaoImpl();
+    private final TeacherDao teacherDao = new MyBatisTeacherDaoImpl();
     private final ClassroomDao classroomDao = new MyBatisClassroomDaoImpl();
 
 

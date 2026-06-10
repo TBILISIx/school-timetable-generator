@@ -1,3 +1,4 @@
+import com.solvd.school.timetable.generator.controller.MainController;
 import com.solvd.school.timetable.generator.dao.ClassroomDao;
 import com.solvd.school.timetable.generator.dao.SubjectDao;
 import com.solvd.school.timetable.generator.dao.TeacherDao;
@@ -32,22 +33,18 @@ public class Main {
 //        classroomDao.findAll().forEach(System.out::println);
 
 
-
         //3. Tests to see what is in database
 
-        DataLoaderService loader = new DataLoaderServiceImpl();
+//        DataLoaderService loader = new DataLoaderServiceImpl();
+//
+//        loader.loadSubjects().forEach(System.out::println);
+//        loader.loadTeachers().forEach(System.out::println);
+//        loader.loadClassrooms().forEach(System.out::println);
+//
+//        TimeSlotService timeSlotService = new TimeSlotServiceImpl();
+//        List<TimeSlot> slots = timeSlotService.generateAndSave(5);
+//        slots.forEach(System.out::println);
 
-        loader.loadSubjects().forEach(System.out::println);
-        loader.loadTeachers().forEach(System.out::println);
-        loader.loadClassrooms().forEach(System.out::println);
-
-
-        TimeSlotService timeSlotService = new TimeSlotServiceImpl();
-        List<TimeSlot> slots = timeSlotService.generateAndSave(5);
-        slots.forEach(System.out::println);
-
-
-
+        new MainController().run();
     }
-
 }
