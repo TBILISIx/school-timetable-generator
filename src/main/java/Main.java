@@ -1,53 +1,46 @@
-import com.solvd.school.timetable.generator.dao.ClassroomDao;
-import com.solvd.school.timetable.generator.dao.SubjectDao;
-import com.solvd.school.timetable.generator.dao.TeacherDao;
-import com.solvd.school.timetable.generator.dao.impl.MyBatisClassroomDaoImpl;
-import com.solvd.school.timetable.generator.dao.impl.MyBatisSubjectDaoImpl;
-import com.solvd.school.timetable.generator.dao.impl.MyBatisTeacherDaoImpl;
-import com.solvd.school.timetable.generator.model.TimeSlot;
+import com.solvd.school.timetable.generator.model.*;
 import com.solvd.school.timetable.generator.service.DataLoaderService;
+import com.solvd.school.timetable.generator.service.GeneticAlgorithmService;
 import com.solvd.school.timetable.generator.service.TimeSlotService;
+import com.solvd.school.timetable.generator.service.TimetableInitializerService;
 import com.solvd.school.timetable.generator.service.impl.DataLoaderServiceImpl;
+import com.solvd.school.timetable.generator.service.impl.GeneticAlgorithmServiceImpl;
 import com.solvd.school.timetable.generator.service.impl.TimeSlotServiceImpl;
+import com.solvd.school.timetable.generator.service.impl.TimetableInitializerServiceImpl;
 
 import java.util.List;
+import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        // 1. Create the DAO implementations
-//        SubjectDao subjectDao = new MyBatisSubjectDaoImpl();
-//        TeacherDao teacherDao = new MyBatisTeacherDaoImpl();
-//        ClassroomDao classroomDao = new MyBatisClassroomDaoImpl();
+        // 1. User input
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter number of subjects per day: ");
+        int subjectsPerDay = scanner.nextInt();
 
-        // 2. Call findAll on each and print results
-//        System.out.println("=== SUBJECTS ===");
-//        subjectDao.findAll().forEach(System.out::println);
-//
-//        System.out.println("=== TEACHERS ===");
-//        teacherDao.findAll().forEach(System.out::println);
-//
-//        System.out.println("=== CLASSROOMS ===");
-//        classroomDao.findAll().forEach(System.out::println);
-
-
-
-        //3. Tests to see what is in database
-
+        //  2. Load data from DB
         DataLoaderService loader = new DataLoaderServiceImpl();
+        List<Subject> subjects = loader.loadSubjects();
+        List<Teacher> teachers = loader.loadTeachers();
+        List<Classroom> classrooms = loader.loadClassrooms();
 
-        loader.loadSubjects().forEach(System.out::println);
-        loader.loadTeachers().forEach(System.out::println);
-        loader.loadClassrooms().forEach(System.out::println);
-
-
+        // 3. Generate time slots
         TimeSlotService timeSlotService = new TimeSlotServiceImpl();
-        List<TimeSlot> slots = timeSlotService.generateAndSave(5);
-        slots.forEach(System.out::println);
+        List<TimeSlot> slots = timeSlotService.generateAndSave(subjectsPerDay);
 
+        // 4. Initialize population
+        TimetableInitializerService initializer = new TimetableInitializerServiceImpl();
+        List<Timetable> population = initializer.initializePopulation(
+                slots, subjects, teachers, classrooms, subjectsPerDay, 50);
 
+        // 5. Run genetic algorithm
+        GeneticAlgorithmService ga = new GeneticAlgorithmServiceImpl();
+        Timetable best = ga.evolve(
+                population, slots, subjects, teachers, classrooms, subjectsPerDay);
 
+        scanner.close();
     }
 
 }
