@@ -67,12 +67,19 @@ public class TimetableInitializerServiceImpl implements TimetableInitializerServ
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("No PE teacher found in DB"));
 
+        Classroom peClassroom = classrooms.stream()
+                .filter(c -> c.getName().toLowerCase().contains("gym"))
+                .findFirst()
+                .orElse(classrooms.get(classrooms.size() - 1));
+
+        List<Classroom> normalClassrooms = classrooms.stream()
+                .filter(c -> !c.getName().toLowerCase().contains("gym"))
+                .toList();
+
         // build entries day by day
         for (Map.Entry<String, List<TimeSlot>> dayEntry : slotsByDay.entrySet()) {
 
             List<TimeSlot> daySlots = dayEntry.getValue();
-
-            // sort slots by period number to guarantee order
             daySlots.sort(Comparator.comparing(TimeSlot::getPeriodNumber));
 
             for (int i = 0; i < daySlots.size(); i++) {
@@ -81,30 +88,24 @@ public class TimetableInitializerServiceImpl implements TimetableInitializerServ
 
                 Subject subject;
                 Teacher teacher;
+                Classroom classroom;
 
                 if (isLastPeriod) {
-                    // PE always goes last
                     subject = peSubject;
                     teacher = peTeacher;
+                    classroom = peClassroom;
                 } else {
-                    // pick a random regular subject
-                    subject = regularSubjects.get(
-                            random.nextInt(regularSubjects.size()));
+                    subject = regularSubjects.get(random.nextInt(regularSubjects.size()));
 
-                    // pick a teacher who can teach this subject
                     Subject finalSubject = subject;
                     List<Teacher> eligibleTeachers = teachers.stream()
                             .filter(t -> t.getSubjects().stream()
                                     .anyMatch(s -> s.getId().equals(finalSubject.getId())))
                             .toList();
 
-                    teacher = eligibleTeachers.get(
-                            random.nextInt(eligibleTeachers.size()));
+                    teacher = eligibleTeachers.get(random.nextInt(eligibleTeachers.size()));
+                    classroom = normalClassrooms.get(random.nextInt(normalClassrooms.size()));
                 }
-
-                // pick a random classroom
-                Classroom classroom = classrooms.get(
-                        random.nextInt(classrooms.size()));
 
                 entries.add(TimetableEntry.builder()
                         .slot(slot)
@@ -120,4 +121,5 @@ public class TimetableInitializerServiceImpl implements TimetableInitializerServ
                 .subjectsPerDay(subjectsPerDay)
                 .build();
     }
+
 }

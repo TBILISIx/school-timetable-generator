@@ -1,12 +1,12 @@
 package com.solvd.school.timetable.generator.service.impl;
 
+import com.solvd.school.timetable.generator.model.GroupSlot;
 import com.solvd.school.timetable.generator.model.Timetable;
 import com.solvd.school.timetable.generator.model.TimetableEntry;
 import com.solvd.school.timetable.generator.service.FitnessService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +28,7 @@ public class FitnessServiceImpl implements FitnessService {
 
         penalty += checkTeacherConflicts(entries);
         penalty += checkClassroomConflicts(entries);
+        penalty += checkClassroomSubjectMatch(entries);
         penalty += checkPeIsLast(entries);
         penalty += checkTeacherSubjectMatch(entries);
         penalty += checkSubjectRepeatPerDay(entries);
@@ -35,118 +36,105 @@ public class FitnessServiceImpl implements FitnessService {
         timetable.setFitnessScore(penalty);
 
         LOGGER.debug("Timetable fitness score: {}", penalty);
-
     }
 
-    //  Same teacher double booked in same slot
+    //  same teacher double booked in same slot
     private int checkTeacherConflicts(List<TimetableEntry> entries) {
-        int penalty = 0;
-
-        for (int i = 0; i < entries.size(); i++) {
-            for (int j = i + 1; j < entries.size(); j++) {
-                TimetableEntry a = entries.get(i);
-                TimetableEntry b = entries.get(j);
-
-                boolean sameSlot    = a.getSlot().getId().equals(b.getSlot().getId());
-                boolean sameTeacher = a.getTeacher().getId().equals(b.getTeacher().getId());
-
-                if (sameSlot && sameTeacher) {
-                    penalty += HARD_PENALTY;
-                }
-            }
-        }
-        return penalty;
+        return entries.stream()
+                .collect(Collectors.groupingBy(
+                        e -> new GroupSlot(
+                                e.getTeacher().getId(),
+                                e.getSlot().getId()
+                        ),
+                        Collectors.counting()
+                ))
+                .values()
+                .stream()
+                .filter(count -> count > 1)
+                .mapToInt(count -> HARD_PENALTY)
+                .sum();
     }
 
-    // Same classroom double booked in same slot
+    //  same classroom double booked in same slot
     private int checkClassroomConflicts(List<TimetableEntry> entries) {
-        int penalty = 0;
-
-        for (int i = 0; i < entries.size(); i++) {
-            for (int j = i + 1; j < entries.size(); j++) {
-                TimetableEntry a = entries.get(i);
-                TimetableEntry b = entries.get(j);
-
-                boolean sameSlot      = a.getSlot().getId().equals(b.getSlot().getId());
-                boolean sameClassroom = a.getClassroom().getId().equals(b.getClassroom().getId());
-
-                if (sameSlot && sameClassroom) {
-                    penalty += HARD_PENALTY;
-                }
-            }
-        }
-        return penalty;
+        return entries.stream()
+                .collect(Collectors.groupingBy(
+                        e -> new GroupSlot(
+                                e.getClassroom().getId(),
+                                e.getSlot().getId()
+                        ),
+                        Collectors.counting()
+                ))
+                .values()
+                .stream()
+                .filter(count -> count > 1)
+                .mapToInt(count -> HARD_PENALTY)
+                .sum();
     }
 
-    // PE last on all day
+    //  non-PE subject assigned to Gym or PE assigned to normal room
+    private int checkClassroomSubjectMatch(List<TimetableEntry> entries) {
+        return entries.stream()
+                .filter(e -> {
+                    boolean isGym = e.getClassroom().getName().toLowerCase().contains("gym");
+                    boolean isPe = e.getSubject().isPe();
+                    return isGym != isPe; // gym should match PE and vice versa
+                })
+                .mapToInt(e -> HARD_PENALTY)
+                .sum();
+    }
+
+    //  PE must always be in the last period of each day 
     private int checkPeIsLast(List<TimetableEntry> entries) {
-        int penalty = 0;
 
-        Map<String, List<TimetableEntry>> byDay = new LinkedHashMap<>();
-        for (TimetableEntry entry : entries) {
-            byDay.computeIfAbsent(entry.getSlot().getDayOfWeek(), k -> new ArrayList<>())
-                    .add(entry);
-        }
+        Map<String, List<TimetableEntry>> byDay = entries.stream()
+                .collect(Collectors.groupingBy(
+                        e -> e.getSlot().getDayOfWeek(),
+                        LinkedHashMap::new,
+                        Collectors.toList()
+                ));
 
-        for (List<TimetableEntry> dayEntries : byDay.values()) {
+        return byDay.values().stream()
+                .mapToInt(dayEntries -> {
+                    int maxPeriod = dayEntries.stream()
+                            .mapToInt(e -> e.getSlot().getPeriodNumber())
+                            .max()
+                            .orElse(0);
 
-            int maxPeriod = dayEntries.stream()
-                    .mapToInt(e -> e.getSlot().getPeriodNumber())
-                    .max()
-                    .orElse(0);
-
-            for (TimetableEntry entry : dayEntries) {
-                boolean isPe         = entry.getSubject().isPe();
-                boolean isLastPeriod = entry.getSlot().getPeriodNumber() == maxPeriod;
-
-                if (isPe && !isLastPeriod)  penalty += HARD_PENALTY;
-                if (!isPe && isLastPeriod)  penalty += HARD_PENALTY;
-            }
-        }
-        return penalty;
+                    return dayEntries.stream()
+                            .mapToInt(e -> {
+                                boolean isPe = e.getSubject().isPe();
+                                boolean isLastPeriod = e.getSlot().getPeriodNumber() == maxPeriod;
+                                if (isPe && !isLastPeriod) return HARD_PENALTY;
+                                if (!isPe && isLastPeriod) return HARD_PENALTY;
+                                return 0;
+                            })
+                            .sum();
+                })
+                .sum();
     }
 
-    // Teacher teaching a subject they are not qualified for penalty
+    //  Teacher teaching a subject they are not qualified for 
     private int checkTeacherSubjectMatch(List<TimetableEntry> entries) {
-        int penalty = 0;
-
-        for (TimetableEntry entry : entries) {
-            Long subjectId = entry.getSubject().getId();
-
-            boolean canTeach = entry.getTeacher().getSubjects().stream()
-                    .anyMatch(s -> s.getId().equals(subjectId));
-
-            if (!canTeach) {
-                penalty += HARD_PENALTY;
-            }
-        }
-        return penalty;
+        return entries.stream()
+                .filter(e -> e.getTeacher().getSubjects().stream()
+                        .noneMatch(s -> s.getId().equals(e.getSubject().getId())))
+                .mapToInt(e -> HARD_PENALTY)
+                .sum();
     }
 
-    //  Same subject appearing more than once per day
+    //  Same subject appearing more than once per day 
     private int checkSubjectRepeatPerDay(List<TimetableEntry> entries) {
-        int penalty = 0;
-
-        Map<String, List<TimetableEntry>> byDay = new LinkedHashMap<>();
-        for (TimetableEntry entry : entries) {
-            byDay.computeIfAbsent(entry.getSlot().getDayOfWeek(), k -> new ArrayList<>())
-                    .add(entry);
-        }
-
-        for (List<TimetableEntry> dayEntries : byDay.values()) {
-
-            Map<Long, Long> subjectCount = dayEntries.stream()
-                    .collect(Collectors.groupingBy(
-                            e -> e.getSubject().getId(),
-                            Collectors.counting()
-                    ));
-
-            for (Long count : subjectCount.values()) {
-                if (count > 1) {
-                    penalty += (int) (SOFT_PENALTY * (count - 1));
-                }
-            }
-        }
-        return penalty;
+        return entries.stream()
+                .collect(Collectors.groupingBy(
+                        e -> e.getSlot().getDayOfWeek() + "_" + e.getSubject().getId(),
+                        Collectors.counting()
+                ))
+                .values()
+                .stream()
+                .filter(count -> count > 1)
+                .mapToInt(count -> SOFT_PENALTY)
+                .sum();
     }
+
 }
