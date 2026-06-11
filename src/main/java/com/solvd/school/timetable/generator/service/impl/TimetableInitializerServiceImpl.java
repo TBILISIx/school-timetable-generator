@@ -15,7 +15,7 @@ public class TimetableInitializerServiceImpl implements TimetableInitializerServ
     private final Random random = new Random();
 
     @Override
-    public List<Timetable> initializePopulation(
+    public List<Timetable> initializeTable(
             List<TimeSlot> slots,
             List<Subject> subjects,
             List<Teacher> teachers,
