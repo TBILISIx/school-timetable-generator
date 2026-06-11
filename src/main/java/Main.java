@@ -31,15 +31,15 @@ public class Main {
 
         List<TimeSlot> slots = timeSlotService.generateAndSave(subjectsPerDay);
 
-        // 4. Initialize population
+        // 4. Initialize tables
 
-        List<Timetable> population = initializer.initializePopulation(
-                slots, subjects, teachers, classrooms, subjectsPerDay, 50);
+        List<Timetable> table = initializer.initializeTable(
+                slots, subjects, teachers, classrooms, subjectsPerDay, 100);
 
         // 5. Run genetic algorithm
 
         Timetable best = geneticAlgorithm.evolve(
-                population, slots, subjects, teachers, classrooms, subjectsPerDay);
+                table, slots, subjects, teachers, classrooms, subjectsPerDay);
 
 
         // 6. Print result

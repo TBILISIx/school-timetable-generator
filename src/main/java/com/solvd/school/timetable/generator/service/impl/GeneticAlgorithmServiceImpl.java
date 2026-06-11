@@ -14,8 +14,8 @@ public class GeneticAlgorithmServiceImpl implements GeneticAlgorithmService {
     private static final Logger LOGGER =
             LogManager.getLogger(GeneticAlgorithmServiceImpl.class);
 
-    private static final int GENERATIONS = 200;
-    private static final double MUTATION_RATE = 0.1;
+    private static final int GENERATIONS = 500;
+    private static final double MUTATION_RATE = 0.3;
 
     private final FitnessService fitnessService = new FitnessServiceImpl();
     private final Random random = new Random();
