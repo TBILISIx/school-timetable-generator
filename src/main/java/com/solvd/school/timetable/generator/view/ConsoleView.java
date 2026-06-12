@@ -14,7 +14,9 @@ public class ConsoleView {
 
     private final Scanner scanner = new Scanner(System.in);
 
-    // ─── Generic input/output
+    private static final int COL_WIDTH = 35;
+
+    // ─── Generic input/output ────────────────────────────────────────────────
 
     public void printMessage(String message) {
         System.out.println(message);
@@ -45,7 +47,7 @@ public class ConsoleView {
         }
     }
 
-    // ─── Menus
+    // ─── Menus ───────────────────────────────────────────────────────────────
 
     public void printMainMenu() {
         System.out.println();
@@ -57,11 +59,13 @@ public class ConsoleView {
         System.out.println("3. View classrooms");
         System.out.println("4. Set periods per day");
         System.out.println("5. Generate timetable");
-        System.out.println("6. Exit");
+        System.out.println("6. View saved timetable");
+        System.out.println("7. Exit");
+        System.out.println("8. Reset all data");
         System.out.println("================================");
     }
 
-    // ─── Display lists
+    // ─── Display lists ───────────────────────────────────────────────────────
 
     public void printSubjects(List<Subject> subjects) {
         System.out.println("\n--- SUBJECTS ---");
@@ -95,7 +99,20 @@ public class ConsoleView {
         }
     }
 
-    // ─── Timetable grid
+    public void printSavedTimetables(List<Timetable> timetables) {
+        System.out.println("\n--- SAVED TIMETABLES ---");
+        if (timetables.isEmpty()) {
+            System.out.println("  No timetables saved yet.");
+            return;
+        }
+        for (Timetable t : timetables) {
+            System.out.println("  ID: " + t.getId()
+                    + "  |  Fitness: " + t.getFitnessScore()
+                    + "  |  Subjects/day: " + t.getSubjectsPerDay());
+        }
+    }
+
+    // ─── Timetable grid ──────────────────────────────────────────────────────
 
     public void printTimetable(Timetable timetable, List<TimeSlot> allSlots) {
         System.out.println("\n========== TIMETABLE (fitness=" + timetable.getFitnessScore() + ") ==========");
@@ -113,19 +130,18 @@ public class ConsoleView {
                 .sorted()
                 .toList();
 
-        // Print header row
+        // Header row
         System.out.printf("%-10s", "Period");
         for (String day : days) {
-            System.out.printf("%-30s", day);
+            System.out.printf("%-" + COL_WIDTH + "s", day);
         }
         System.out.println();
-        System.out.println("-".repeat(10 + days.size() * 30));
+        System.out.println("-".repeat(10 + days.size() * COL_WIDTH));
 
-        // Print each period row
+        // Period rows
         for (int period : periods) {
             System.out.printf("%-10s", period);
             for (String day : days) {
-                // Find the entry matching this day + period
                 TimetableEntry match = timetable.getEntries().stream()
                         .filter(e -> e.getSlot().getDayOfWeek().equals(day)
                                 && e.getSlot().getPeriodNumber() == period)
@@ -133,20 +149,20 @@ public class ConsoleView {
                         .orElse(null);
 
                 if (match == null) {
-                    System.out.printf("%-30s", "-");
+                    System.out.printf("%-" + COL_WIDTH + "s", "-");
                 } else {
                     String cell = match.getSubject().getName()
                             + "/" + match.getTeacher().getName()
                             + "/" + match.getClassroom().getName();
-                    // Truncate if too long for the column
-                    if (cell.length() > 28) cell = cell.substring(0, 28);
-                    System.out.printf("%-30s", cell);
+                    if (cell.length() > COL_WIDTH - 2) {
+                        cell = cell.substring(0, COL_WIDTH - 2);
+                    }
+                    System.out.printf("%-" + COL_WIDTH + "s", cell);
                 }
             }
             System.out.println();
         }
 
-        System.out.println("=".repeat(10 + days.size() * 30));
+        System.out.println("=".repeat(10 + days.size() * COL_WIDTH));
     }
-
 }

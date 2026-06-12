@@ -42,8 +42,9 @@
 
     <!-- TimetableResultMap -->
     <resultMap id="TimetableResultMap" type="Timetable">
-        <id property="id" column="timetable_id"/>
-        <result property="fitnessScore" column="fitness_score"/>
+        <id     property="id"             column="timetable_id"/>
+        <result property="fitnessScore"   column="fitness_score"/>
+        <result property="subjectsPerDay" column="subjects_per_day"/>
         <collection property="entries"
                     ofType="TimetableEntry"
                     resultMap="EntryResultMap"/>
@@ -90,5 +91,22 @@
         ON ts.id = e.time_slot_id
         WHERE t.id = #{id}
     </select>
+
+    <select id="findAll" resultMap="TimetableResultMap">
+        SELECT
+        t.id            AS timetable_id,
+        t.fitness_score AS fitness_score,
+        t.subjects_per_day AS subjects_per_day
+        FROM timetables t
+        ORDER BY t.id DESC
+    </select>
+
+    <delete id="deleteEntries">
+        DELETE FROM timetable_entries
+    </delete>
+
+    <delete id="deleteAll">
+        DELETE FROM timetables
+    </delete>
 
 </mapper>

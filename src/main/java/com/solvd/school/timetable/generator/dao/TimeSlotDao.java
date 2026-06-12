@@ -14,4 +14,8 @@ public interface TimeSlotDao {
 
     void deleteAll();
 
+    void disableFkChecks();
+
+    void enableFkChecks();
+
 }

@@ -6,32 +6,24 @@ import com.solvd.school.timetable.generator.model.Timetable;
 import com.solvd.school.timetable.generator.model.TimetableEntry;
 import org.apache.ibatis.session.SqlSession;
 
+import java.util.List;
+
 public class MyBatisTimetableDaoImpl implements TimetableDao {
 
-    /**
-     * Saves the timetable header row first, then saves every entry linked
-     * to it — all inside one transaction. If anything fails the whole save
-     * is rolled back so you never end up with a timetable that has no entries.
-     */
     @Override
-    public Timetable insert(Timetable timetable) {
-        // openManagedSession = autoCommit OFF, we control commit/rollback
+    public void insert(Timetable timetable) {
         try (SqlSession session = MyBatisSessionHolder.openManagedSession()) {
             try {
                 TimetableDao mapper = session.getMapper(TimetableDao.class);
 
-                // 1. Insert the timetable row — MyBatis writes the generated id
-                //    back into timetable.id because of useGeneratedKeys="true"
                 mapper.insert(timetable);
 
-                // 2. Now that we have the id, stamp it on every entry and save
                 for (TimetableEntry entry : timetable.getEntries()) {
                     entry.setTimetableId(timetable.getId());
                     mapper.insertEntry(entry);
                 }
 
                 session.commit();
-                return timetable;
 
             } catch (Exception e) {
                 session.rollback();
@@ -53,6 +45,30 @@ public class MyBatisTimetableDaoImpl implements TimetableDao {
         try (SqlSession session = MyBatisSessionHolder.openSession()) {
             TimetableDao mapper = session.getMapper(TimetableDao.class);
             return mapper.findById(id);
+        }
+    }
+
+    @Override
+    public List<Timetable> findAll() {
+        try (SqlSession session = MyBatisSessionHolder.openSession()) {
+            TimetableDao mapper = session.getMapper(TimetableDao.class);
+            return mapper.findAll();
+        }
+    }
+
+    @Override
+    public void deleteAll() {
+        try (SqlSession session = MyBatisSessionHolder.openSession()) {
+            TimetableDao mapper = session.getMapper(TimetableDao.class);
+            mapper.deleteAll();
+        }
+    }
+
+    @Override
+    public void deleteEntries() {
+        try (SqlSession session = MyBatisSessionHolder.openSession()) {
+            TimetableDao mapper = session.getMapper(TimetableDao.class);
+            mapper.deleteEntries();
         }
     }
 }

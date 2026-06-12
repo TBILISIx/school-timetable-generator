@@ -40,4 +40,20 @@ public class MyBatisTimeSlotDaoImpl implements TimeSlotDao {
             mapper.deleteAll();
         }
     }
+
+    @Override
+    public void disableFkChecks() {
+        try (SqlSession session = MyBatisSessionHolder.openSession()) {
+            TimeSlotDao mapper = session.getMapper(TimeSlotDao.class);
+            mapper.disableFkChecks();
+        }
+    }
+
+    @Override
+    public void enableFkChecks() {
+        try (SqlSession session = MyBatisSessionHolder.openSession()) {
+            TimeSlotDao mapper = session.getMapper(TimeSlotDao.class);
+            mapper.enableFkChecks();
+        }
+    }
 }
