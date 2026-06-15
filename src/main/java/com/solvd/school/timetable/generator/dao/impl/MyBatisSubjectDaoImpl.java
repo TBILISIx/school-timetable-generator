@@ -1,8 +1,8 @@
 package com.solvd.school.timetable.generator.dao.impl;
 
-import com.solvd.school.timetable.generator.util.MyBatisSessionHolder;
 import com.solvd.school.timetable.generator.dao.SubjectDao;
 import com.solvd.school.timetable.generator.model.Subject;
+import com.solvd.school.timetable.generator.util.MyBatisSessionHolder;
 import org.apache.ibatis.session.SqlSession;
 
 import java.util.List;

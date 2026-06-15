@@ -21,43 +21,62 @@ public class Main {
 
     public static void main(String[] args) {
 
-        // 1. User input
-
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter number of subjects per day: ");
-        int subjectsPerDay = scanner.nextInt();
 
-        if (subjectsPerDay < 10 & subjectsPerDay > 0) {
+        // load data first, we need to know how many subjects we have
+        // before we can ask the user a sensible question
+        List<Subject> subjects = loader.loadSubjects();
+        List<Teacher> teachers = loader.loadTeachers();
+        List<Classroom> classrooms = loader.loadClassrooms();
 
-            //  2. Load data from DB
+        // count regular (non PE) subjects, this is the max amount of
+        // different subjects we can fit in a day without repeating one
+        long regularSubjectCount = subjects.stream().filter(s -> !s.isPe()).count();
+        int maxSubjectsPerDay = (int) regularSubjectCount + 1; // +1 for the PE period
 
-            List<Subject> subjects = loader.loadSubjects();
-            List<Teacher> teachers = loader.loadTeachers();
-            List<Classroom> classrooms = loader.loadClassrooms();
+        int subjectsPerDay = readSubjectsPerDay(scanner, maxSubjectsPerDay);
 
-            // 3. Generate time slots
+        // generate time slots
 
-            List<TimeSlot> slots = timeSlotService.generateAndSave(subjectsPerDay);
+        List<TimeSlot> slots = timeSlotService.generateAndSave(subjectsPerDay);
 
-            // 4. Initialize tables
+        // initialize population
 
-            List<Timetable> table = initializer.initializeTable(
-                    slots, subjects, teachers, classrooms, subjectsPerDay, 100);
+        List<Timetable> population = initializer.initializeTable(
+                slots, subjects, teachers, classrooms, subjectsPerDay, 50);
 
-            // 5. Run genetic algorithm
+        // run genetic algorithm
 
-            Timetable best = geneticAlgorithm.evolve(
-                    table, slots, subjects, teachers, classrooms, subjectsPerDay);
+        Timetable best = geneticAlgorithm.evolve(population, subjects, teachers, classrooms);
 
-            // 6. Print result
+        // print result
 
-            PrinterUtils.print(best);
+        PrinterUtils.print(best);
 
+        if (best.getFitnessScore() == 0) {
+            System.out.println("Optimal timetable found (fitness score: 0).");
         } else {
-
-            System.out.println("Invalid number of subjects per day. Please enter a number between 0 and 10.");
+            System.out.println("Best timetable found, but it still has "
+                    + best.getFitnessScore() + " constraint-violation point(s).");
         }
+
         scanner.close();
+    }
+
+    // just keeps asking until the user enters something we can actually use
+    private static int readSubjectsPerDay(Scanner scanner, int maxSubjectsPerDay) {
+        int value;
+        while (true) {
+            System.out.printf("Enter number of subjects per day (2-%d): ", maxSubjectsPerDay);
+            value = scanner.nextInt();
+            if (value >= 2 && value <= maxSubjectsPerDay) {
+                return value;
+            }
+            System.out.printf(
+                    "Invalid value. Must be between 2 and %d "
+                            + "(last period is always PE, and we only have %d regular subjects).%n",
+                    maxSubjectsPerDay, maxSubjectsPerDay - 1);
+        }
     }
 
 }
