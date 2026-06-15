@@ -9,13 +9,14 @@ import org.apache.logging.log4j.Logger;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 public class GeneticAlgorithmServiceImpl implements GeneticAlgorithmService {
 
     private static final Logger LOGGER =
             LogManager.getLogger(GeneticAlgorithmServiceImpl.class);
 
-    private static final int GENERATIONS = 500;
-    private static final double MUTATION_RATE = 0.3;
+    private static final int GENERATIONS = 200;
+    private static final double MUTATION_RATE = 0.1;
 
     private final FitnessService fitnessService = new FitnessServiceImpl();
     private final Random random = new Random();
@@ -23,11 +24,9 @@ public class GeneticAlgorithmServiceImpl implements GeneticAlgorithmService {
     @Override
     public Timetable evolve(
             List<Timetable> table,
-            List<TimeSlot> slots,
             List<Subject> subjects,
             List<Teacher> teachers,
-            List<Classroom> classrooms,
-            int subjectsPerDay) {
+            List<Classroom> classrooms) {
 
         //  1. score initial table
         table.forEach(fitnessService::calculateFitness);
@@ -45,7 +44,7 @@ public class GeneticAlgorithmServiceImpl implements GeneticAlgorithmService {
             while (newTable.size() < table.size()) {
                 Timetable parentA = parents.get(random.nextInt(parents.size()));
                 Timetable parentB = parents.get(random.nextInt(parents.size()));
-                Timetable child = crossover(parentA, parentB, slots, subjects, teachers, classrooms);
+                Timetable child = crossover(parentA, parentB, subjects, teachers, classrooms);
                 newTable.add(child);
             }
 
@@ -93,7 +92,6 @@ public class GeneticAlgorithmServiceImpl implements GeneticAlgorithmService {
     private Timetable crossover(
             Timetable parentA,
             Timetable parentB,
-            List<TimeSlot> slots,
             List<Subject> subjects,
             List<Teacher> teachers,
             List<Classroom> classrooms) {
@@ -160,7 +158,15 @@ public class GeneticAlgorithmServiceImpl implements GeneticAlgorithmService {
         if (eligibleTeachers.isEmpty()) return;
 
         Teacher newTeacher = eligibleTeachers.get(random.nextInt(eligibleTeachers.size()));
-        Classroom newClassroom = classrooms.get(random.nextInt(classrooms.size()));
+
+        // dont pick gym here, gym is only for PE (same check as in the initializer)
+        List<Classroom> normalClassrooms = classrooms.stream()
+                .filter(c -> !c.getName().toLowerCase().contains("gym"))
+                .toList();
+
+        if (normalClassrooms.isEmpty()) return;
+
+        Classroom newClassroom = normalClassrooms.get(random.nextInt(normalClassrooms.size()));
 
         // apply mutation
         target.setSubject(newSubject);
