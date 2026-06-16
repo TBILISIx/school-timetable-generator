@@ -22,19 +22,13 @@ public class Main {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
+        int subjectsPerDay = readSubjectsPerDay(scanner);
 
         // load data first, we need to know how many subjects we have
         // before we can ask the user a sensible question
         List<Subject> subjects = loader.loadSubjects();
         List<Teacher> teachers = loader.loadTeachers();
         List<Classroom> classrooms = loader.loadClassrooms();
-
-        // count regular (non PE) subjects, this is the max amount of
-        // different subjects we can fit in a day without repeating one
-        long regularSubjectCount = subjects.stream().filter(s -> !s.isPe()).count();
-        int maxSubjectsPerDay = (int) regularSubjectCount + 1; // +1 for the PE period
-
-        int subjectsPerDay = readSubjectsPerDay(scanner, maxSubjectsPerDay);
 
         // generate time slots
 
@@ -64,18 +58,15 @@ public class Main {
     }
 
     // just keeps asking until the user enters something we can actually use
-    private static int readSubjectsPerDay(Scanner scanner, int maxSubjectsPerDay) {
+    private static int readSubjectsPerDay(Scanner scanner) {
         int value;
         while (true) {
-            System.out.printf("Enter number of subjects per day (2-%d): ", maxSubjectsPerDay);
+            System.out.print("Enter number of subjects per day (2-9): ");
             value = scanner.nextInt();
-            if (value >= 2 && value <= maxSubjectsPerDay) {
+            if (value >= 2 && value <= 9) {
                 return value;
             }
-            System.out.printf(
-                    "Invalid value. Must be between 2 and %d "
-                            + "(last period is always PE, and we only have %d regular subjects).%n",
-                    maxSubjectsPerDay, maxSubjectsPerDay - 1);
+            System.out.println("Invalid value. Please enter a number between 2 and 9.");
         }
     }
 
