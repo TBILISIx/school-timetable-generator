@@ -15,12 +15,12 @@
 <!-- aliases for mappers -->
 
     <typeAliases>
-        <typeAlias alias="Classroom" type="com.solvd.school.timetable.generator.model.Classroom"/>
-        <typeAlias alias="Subject" type="com.solvd.school.timetable.generator.model.Subject"/>
-        <typeAlias alias="Teacher" type="com.solvd.school.timetable.generator.model.Teacher"/>
-        <typeAlias alias="TimeSlot" type="com.solvd.school.timetable.generator.model.TimeSlot"/>
-        <typeAlias alias="Timetable" type="com.solvd.school.timetable.generator.model.Timetable"/>
-        <typeAlias alias="TimetableEntry" type="com.solvd.school.timetable.generator.model.TimetableEntry"/>
+        <typeAlias alias="Classroom" type="com.solvd.schooltimetablegenerator.model.Classroom"/>
+        <typeAlias alias="Subject" type="com.solvd.schooltimetablegenerator.model.Subject"/>
+        <typeAlias alias="Teacher" type="com.solvd.schooltimetablegenerator.model.Teacher"/>
+        <typeAlias alias="TimeSlot" type="com.solvd.schooltimetablegenerator.model.TimeSlot"/>
+        <typeAlias alias="Timetable" type="com.solvd.schooltimetablegenerator.model.Timetable"/>
+        <typeAlias alias="TimetableEntry" type="com.solvd.schooltimetablegenerator.model.TimetableEntry"/>
     </typeAliases>
 
     <environments default="development">

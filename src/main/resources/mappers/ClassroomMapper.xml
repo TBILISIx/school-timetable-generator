@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.solvd.school.timetable.generator.dao.ClassroomDao">
+<mapper namespace="com.solvd.schooltimetablegenerator.dao.ClassroomDao">
 
     <!-- ResultMap -->
     <resultMap id="ClassroomResultMap" type="Classroom">

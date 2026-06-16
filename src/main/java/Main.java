@@ -1,13 +1,13 @@
-import com.solvd.school.timetable.generator.model.*;
-import com.solvd.school.timetable.generator.service.DataLoaderService;
-import com.solvd.school.timetable.generator.service.GeneticAlgorithmService;
-import com.solvd.school.timetable.generator.service.TimeSlotService;
-import com.solvd.school.timetable.generator.service.TimetableInitializerService;
-import com.solvd.school.timetable.generator.service.impl.DataLoaderServiceImpl;
-import com.solvd.school.timetable.generator.service.impl.GeneticAlgorithmServiceImpl;
-import com.solvd.school.timetable.generator.service.impl.TimeSlotServiceImpl;
-import com.solvd.school.timetable.generator.service.impl.TimetableInitializerServiceImpl;
-import com.solvd.school.timetable.generator.util.PrinterUtils;
+import com.solvd.schooltimetablegenerator.model.*;
+import com.solvd.schooltimetablegenerator.service.DataLoaderService;
+import com.solvd.schooltimetablegenerator.service.GeneticAlgorithmService;
+import com.solvd.schooltimetablegenerator.service.TimeSlotService;
+import com.solvd.schooltimetablegenerator.service.TimetableInitializerService;
+import com.solvd.schooltimetablegenerator.service.impl.DataLoaderServiceImpl;
+import com.solvd.schooltimetablegenerator.service.impl.GeneticAlgorithmServiceImpl;
+import com.solvd.schooltimetablegenerator.service.impl.TimeSlotServiceImpl;
+import com.solvd.schooltimetablegenerator.service.impl.TimetableInitializerServiceImpl;
+import com.solvd.schooltimetablegenerator.util.PrinterUtils;
 
 import java.util.List;
 import java.util.Scanner;
